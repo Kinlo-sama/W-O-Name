@@ -1,0 +1,15 @@
+README.md
+pyproject.toml
+tests/test_backbone.py
+woname.egg-info/PKG-INFO
+woname.egg-info/SOURCES.txt
+woname.egg-info/dependency_links.txt
+woname.egg-info/requires.txt
+woname.egg-info/top_level.txt
+woname/architectures/__init__.py
+woname/architectures/backbones/__init__.py
+woname/architectures/backbones/base.py
+woname/architectures/backbones/configs.py
+woname/architectures/backbones/registry.py
+woname/architectures/backbones/models/__init__.py
+woname/architectures/backbones/models/tiny_cnn.py
