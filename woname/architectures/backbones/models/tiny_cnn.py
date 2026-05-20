@@ -2,10 +2,10 @@ import torch
 import torch.nn as nn
 
 from ..base import BackboneBase
-from ..registry import register_backbone
+from ..registry import BACKBONES
 
 
-@register_backbone("tiny_cnn")
+@BACKBONES.register("tiny_cnn")
 class TinyCNN(BackboneBase):
     """
     Very small CNN backbone for testing the framework.

@@ -1,7 +1,7 @@
 import torch
 
 from woname.architectures.backbones.configs import TinyCNNConfig
-from woname.architectures.backbones.registry import build_backbone
+from woname.architectures.backbones.registry import BACKBONES
 
 # Import models so registry gets populated
 from woname.architectures.backbones.models import *
@@ -9,7 +9,7 @@ from woname.architectures.backbones.models import *
 
 cfg = TinyCNNConfig()
 
-model = build_backbone(cfg)
+model = BACKBONES.build(cfg)
 
 x = torch.randn(1, 3, 224, 224)
 

@@ -1,3 +1,5 @@
 woname/architectures/__pycache__
 woname/architectures/backbones/__pycache__
 woname/architectures/backbones/models/__pycache__
+tests/__pycache__
+woname.egg-info
