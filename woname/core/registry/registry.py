@@ -33,10 +33,17 @@ class Registry:
             )
         return self._modules[name]
     
-    def build(self, cfg):
+    def build(self, cfg, *args, **kwargs):
+
         module_type = cfg.type
-        module_class = self.get(module_type)
-        return module_class(cfg)
+
+        module_class = self._modules[module_type]
+
+        return module_class(
+            cfg,
+            *args,
+            **kwargs
+        )
     
     def list_modules(self):
         return list(self._modules.keys())
