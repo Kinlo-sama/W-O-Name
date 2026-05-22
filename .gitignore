@@ -4,3 +4,5 @@ woname/architectures/backbones/models/__pycache__
 woname.egg-info
 tests/__pycache__
 woname.egg-info
+woname/vision/segmentation/models/__pycache__
+woname/vision/segmentation/__pycache__
