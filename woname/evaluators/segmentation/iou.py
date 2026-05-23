@@ -1,18 +1,18 @@
 import torch
 
 from woname.evaluators.base import MetricBase
-from woname.evaluators.registry import METRICS
+from woname.evaluators.registry import EVALUATORS
+from ..configs import IoUConfig
 
-@METRICS.register("iou")
+@EVALUATORS.register("iou")
 class IoU(MetricBase):
     def __init__(
             self,
-            threshold: float = 0.5,
-            smooth: float = 1e-6
+            cfg: IoUConfig
     ):
         super().__init__()
-        self.threshold = threshold
-        self.smooth = smooth
+        self.threshold = cfg.threshold
+        self.smooth = cfg.smooth
 
     def forward(
             self,

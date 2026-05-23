@@ -2,8 +2,10 @@ from typing import Dict
 
 import torch
 from torch.utils.data import DataLoader
+from tqdm import tqdm
 
 from .configs import TrainerConfig
+from woname.evaluators.registry import EVALUATORS
 
 class Trainer:
     def __init__(
@@ -14,33 +16,55 @@ class Trainer:
         self.device = torch.device(
             cfg.device
         )
-    
+        self.evaluators = {}
+        if cfg.evaluators is not None:
+            self.evaluators = {
+                evaluator_cfg.type: EVALUATORS.build(evaluator_cfg)
+                for evaluator_cfg in cfg.evaluators
+            }    
     def fit(
             self,
             model,
             train_loader: DataLoader,
             optimizer,
             criterion,
-            metrics: Dict = None,
             val_loaders: DataLoader = None
     ):
         model.to(self.device)
+
         for epoch in range(self.cfg.epochs):
-            trainer_loss = self.train_one_epoch(
+            train_results = self.train_one_epoch(
                 model,
                 train_loader,
                 optimizer,
                 criterion,
-                metrics
+                self.evaluators,
+                epoch
+            )
+            train_loss = train_results["loss"]
+            train_metrics = train_results["metrics"]
+            metrics_str = " - ".join(
+                f"{name}: {value:.4f}"
+                for name, value in train_metrics.items()
             )
             if val_loaders is not None:
-                val_loss = self.validate(
+                val_loss = self.validate_one_epoch(
                     model, 
                     val_loaders,
                     criterion,
-                    metrics
                 )
-            print(f"Epoch {epoch+1}/{self.cfg.epochs}")
+                print(
+                f"Epoch {epoch+1}/{self.cfg.epochs} "
+                f"Train Loss: {train_loss:.4f} "
+                f"TrainDice: {metrics_str['dice']:.4f}"
+                f"- val_loss: {val_loss:.4f}"
+            )
+            else:
+                print(
+                    f"Epoch {epoch+1}/{self.cfg.epochs} "
+                    f"Train Loss: {train_loss:.4f} "
+                    f"{metrics_str}"
+                )
     
     def train_one_epoch(
             self,
@@ -48,21 +72,29 @@ class Trainer:
             loader,
             optimizer,
             criterion,
-            metrics
+            evaluators,
+            epoch
     ):
         model.train()
         running_loss = 0.0
-        for step, batch in enumerate(loader):
-            images, targets = batch
-            
-            images = images.to(self.device)
-            targets = targets.to(self.device)
+        running_metrics = {}
+        if evaluators:
+            running_metrics = {
+                name: 0.0
+                for name in evaluators
+            }
+        
+        pbar = tqdm(loader, desc=f"{epoch + 1}/{self.cfg.epochs + 1}", leave=False)
+        for batch in pbar:
+
+            images = batch["image"].to(self.device)
+            targets = batch["target"].to(self.device)
 
             optimizer.zero_grad()
             
-            logits = model(images)
+            outputs = model(images)
             loss = criterion(
-                logits,
+                outputs,
                 targets
             )
             
@@ -70,31 +102,48 @@ class Trainer:
             optimizer.step()
             running_loss += loss.item()
 
-            if metrics is not None:
-                pass
+            postfix = {"loss": loss.item()}
+            if evaluators:
+                for name, evaluator in evaluators.items():
+                    value = evaluator(
+                        outputs,
+                        targets
+                    )
+                    running_metrics[name] += value.item()
+                    postfix[name] = running_metrics[name] / (pbar.n + 1)
+            
+
+
+            pbar.set_postfix(postfix)
+            
+        for name in running_metrics:
+            running_metrics[name] /= len(loader)
         
-        return running_loss / len(loader)
+        return {
+            "loss": running_loss / len(loader),
+            "metrics": running_metrics
+        }
     
-    def validate(
+    def validate_one_epoch(
             self,
             model,
             loader,
             criterion,
-            metrics
     ):
         model.eval()
         running_loss = 0.0
-        with torch.no_grad():    
-            for step, batch in enumerate(loader):   
-                images, targets = batch
-                images = images.to(self.device)
-                targets = targets.to(self.device)
+        with torch.no_grad(): 
+            pbar = tqdm(loader, desc="Validation", leave=False)   
+            for batch in pbar:   
+                images = batch["image"].to(self.device)
+                targets = batch["target"].to(self.device)
                 
-                logits = model(images)
+                outputs = model(images)
                 loss = criterion(
-                    logits,
+                    outputs,
                     targets
                 )
                 
                 running_loss += loss.item()
+                pbar.set_postfix({"val_loss": loss.item()})
         return running_loss / len(loader)

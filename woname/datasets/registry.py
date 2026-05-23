@@ -1,3 +1,3 @@
 from woname.core.registry import Registry
 
-EVALUATORS = Registry("evaluators")
+DATASETS = Registry("datasets")

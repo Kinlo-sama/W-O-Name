@@ -1,16 +1,17 @@
 import torch
 
 from woname.evaluators.base import MetricBase
-from woname.evaluators.registry import METRICS
+from woname.evaluators.registry import EVALUATORS
+from ..configs import PixelAccuracyConfig
 
-@METRICS.register("pixel_accuracy")
+@EVALUATORS.register("pixel_accuracy")
 class PixelAccuracy(MetricBase):
     def __init__(
             self,
-            threshold : float = 0.5
+            cfg: PixelAccuracyConfig
     ):
         super().__init__()
-        self.threshold = threshold
+        self.threshold = cfg.threshold
 
     def forward(
             self,

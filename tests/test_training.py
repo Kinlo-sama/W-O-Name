@@ -30,6 +30,7 @@ from woname.core.engine.trainer import Trainer
 from woname.core.engine.configs import (
     TrainerConfig
 )
+from woname.evaluators.configs import DiceScoreConfig, IoUConfig, PixelAccuracyConfig
 
 
 
@@ -50,7 +51,7 @@ class DummySegmentationDataset(Dataset):
         self,
         idx
     ):
-
+        
         image = torch.randn(
             3,
             128,
@@ -63,7 +64,12 @@ class DummySegmentationDataset(Dataset):
             (1, 128, 128)
         ).float()
 
-        return image, mask
+        sample = dict(
+            image=image,
+            mask=mask,
+            target=mask
+        )
+        return sample
     
 dataset = DummySegmentationDataset()
 
@@ -105,7 +111,12 @@ optimizer = optim.Adam(
 
 trainer_cfg = TrainerConfig(
     epochs=3,
-    device="cpu"
+    device="cpu",
+    evaluators=[
+        IoUConfig(),
+        PixelAccuracyConfig(),
+        DiceScoreConfig()
+    ]
 )
 
 trainer = Trainer(

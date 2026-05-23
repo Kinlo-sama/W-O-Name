@@ -12,3 +12,7 @@ woname/losses/__pycache__
 woname/losses/segmentation/__pycache__
 woname/evaluators/__pycache__
 woname/evaluators/segmentation/__pycache__
+woname/transforms/__pycache__
+data
+woname/datasets/__pycache__
+woname/datasets/segmentation/__pycache__
