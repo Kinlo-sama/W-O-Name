@@ -3,15 +3,16 @@ import torch.nn as nn
 
 from woname.losses.base import LossBase
 from woname.losses.registry import LOSSES
+from woname.losses.configs import DiceLossConfig
 
 @LOSSES.register("dice_loss")
 class DiceLoss(LossBase):
     def __init__(
             self,
-            smooth: float = 1e-6
+            cfg: DiceLossConfig
     ):
         super().__init__()
-        self.smooth = smooth
+        self.smooth = cfg.smooth
     
     def forward(
             self,

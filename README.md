@@ -9,6 +9,10 @@ La estructura de las carpetas es la siguiente:
     - Pluggins: Modulos externos y extras
     - Registro de modelos 
 - Vision: Entran tareas por vision por computadora propuestas
+-  Architectures: Backbone, Neck, Decoders, Heads
+- Losses: Funciones de perdida
+- Evaluators: Metricas de evaluación
+- Layers: Capas primitivas e.g: DobConv2D, ConvTrans, ConvDil, etc.
 
 Los formatos propuestos para las configuraciones de cada tarea son los siguientes:
 - YAML
@@ -17,3 +21,8 @@ Los formatos propuestos para las configuraciones de cada tarea son los siguiente
 - Python
 - CLI
 - web UI
+
+
+## **Metas**
+
+- Implementación **lazy registration**
