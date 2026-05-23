@@ -10,3 +10,5 @@ woname/architectures/heads/__pycache__
 woname/architectures/heads/models/__pycache__
 woname/losses/__pycache__
 woname/losses/segmentation/__pycache__
+woname/evaluators/__pycache__
+woname/evaluators/segmentation/__pycache__
