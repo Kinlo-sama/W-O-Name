@@ -16,3 +16,4 @@ woname/transforms/__pycache__
 data
 woname/datasets/__pycache__
 woname/datasets/segmentation/__pycache__
+.DS_Store

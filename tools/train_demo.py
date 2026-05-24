@@ -29,8 +29,8 @@ dataset_cfg = {
     "images_size": (512,512),
     "transforms": transforms
 }
-dataset = DATASETS.build(dataset_cfg)
 
+dataset = DATASETS.build(dataset_cfg)
 loader = DataLoader(dataset, batch_size=16, shuffle=True)
 
 backbone = {
