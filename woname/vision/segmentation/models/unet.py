@@ -8,13 +8,13 @@ from ..base import SegmentationModelBase
 from ..registry import SEGMENTATION_MODELS
 from ..configs import UNetConfig
 
-@SEGMENTATION_MODELS.register("unet")
+@SEGMENTATION_MODELS.register("unet", config=UNetConfig)
 class UNet(SegmentationModelBase):
     def __init__(
             self,
             cfg: UNetConfig
     ):
-        super().__init__()
+        super().__init__(cfg)
         self.backbone = BACKBONES.build(
             cfg.backbone
         )

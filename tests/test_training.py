@@ -3,35 +3,12 @@ from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
 import torch.optim as optim
 
-from woname.architectures.backbones.configs import (
-    UNetEncoderConfig
-)
-
-from woname.architectures.decoders.configs import (
-    UNetDecoderConfig
-)
-
-from woname.architectures.heads.configs import (
-    SegmentationHeadConfig
-)
-
-from woname.vision.segmentation.configs import (
-    UNetConfig
-)
-
-from woname.vision.segmentation.registry import (
-    SEGMENTATION_MODELS
-)
-
+from woname.vision.segmentation.registry import SEGMENTATION_MODELS
 from woname.losses.registry import LOSSES
+from woname.transforms.compose import Compose
 
 from woname.core.engine.trainer import Trainer
-
-from woname.core.engine.configs import (
-    TrainerConfig
-)
-from woname.evaluators.configs import DiceScoreConfig, IoUConfig, PixelAccuracyConfig
-
+from woname.core.engine.configs import TrainerConfig
 
 
 class DummySegmentationDataset(Dataset):
@@ -79,30 +56,39 @@ loader = DataLoader(
     shuffle=True
 )
 
-model_cfg = UNetConfig(
+compose = Compose.from_dicts([
+    {"type": "resize", "size": (512,512)},
+    {"type": "randomhorizontalflip"}
+])
 
-    backbone=UNetEncoderConfig(),
+backbone = {
+    "type":"unet_encoder",
+}
 
-    decoder=UNetDecoderConfig(),
+decoder = {
+    "type":"unet_decoder",
+}
 
-    head=SegmentationHeadConfig(
-        num_classes=1
-    )
-)
+head = {
+    "type":"segmentation_head",
+    "num_classes":1
+}
+model = SEGMENTATION_MODELS.build({
+    "type":"unet",
+    "backbone": backbone,
+    "decoder": decoder,
+    "head": head
+})
 
-model = SEGMENTATION_MODELS.build(
-    model_cfg
-)
+criterion = LOSSES.build({
+    "type":"dice_bce_loss"
+})
 
-from woname.losses.configs import (
-    DiceBCELossConfig
-)
-
-loss_cfg = DiceBCELossConfig()
-
-criterion = LOSSES.build(
-    loss_cfg
-)
+evaluators = [
+    {"type":"iou"},
+    {"type": "pixel_accuracy"},
+    {"type": "dice_score"}
+]
 
 optimizer = optim.Adam(
     model.parameters(),
@@ -112,11 +98,7 @@ optimizer = optim.Adam(
 trainer_cfg = TrainerConfig(
     epochs=3,
     device="cpu",
-    evaluators=[
-        IoUConfig(),
-        PixelAccuracyConfig(),
-        DiceScoreConfig()
-    ]
+    evaluators=evaluators
 )
 
 trainer = Trainer(

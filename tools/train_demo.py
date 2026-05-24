@@ -1,71 +1,85 @@
 import torch
+from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
-
-from woname.architectures.backbones.configs import UNetEncoderConfig
-from woname.architectures.decoders.configs import UNetDecoderConfig
-from woname.architectures.heads.configs import SegmentationHeadConfig
-from woname.vision.segmentation.configs import UNetConfig
+import torch.optim as optim
 
 from woname.vision.segmentation.registry import SEGMENTATION_MODELS
 from woname.losses.registry import LOSSES
+from woname.datasets.registry import DATASETS
 
+from woname.transforms.compose import Compose
 from woname.core.engine.trainer import Trainer
 from woname.core.engine.configs import TrainerConfig
-
 from woname.datasets.segmentation.segmentation_dataset import SegmentationClass
 from woname.datasets.configs import SegmentationDatasetConfig
 
-model_cfg = UNetConfig(
-    backbone=UNetEncoderConfig(),
-    decoder=UNetDecoderConfig(),
-    head=SegmentationHeadConfig(num_classes=1)
-)
 
-model = SEGMENTATION_MODELS.build(model_cfg)
-from woname.transforms.geometric import Resize, RandomHorizontalFlip
-from woname.transforms.photometric import Normalize
-from woname.transforms.tensor import ToTensor
-from woname.transforms.compose import Compose
-from woname.losses.configs import DiceBCELossConfig
-
-from woname.evaluators.configs import IoUConfig, DiceScoreConfig, PixelAccuracyConfig
-
-
-transforms = Compose([
-
-    Resize((256, 256)),
-    RandomHorizontalFlip(),
-    ToTensor()
+transforms = Compose.from_dicts([
+    {"type": "resize", "size": (512,512)},
+    {"type": "randomhorizontalflip"},
+    {"type": "totensor"}
 ])
 
-criterion = LOSSES.build(DiceBCELossConfig())
+dataset_cfg = {
+    "type": "segmentation_dataset",
+    "images_dir": "data/SegmentationRoads/images",
+    "masks_dir": "data/SegmentationRoads/masks",
+    "img_suffix": ".jpg",
+    "mask_suffix": ".png",
+    "images_size": (512,512),
+    "transforms": transforms
+}
+dataset = DATASETS.build(dataset_cfg)
 
-dataset = SegmentationClass(
-    SegmentationDatasetConfig(
-        images_dir="data/SegmentationRoads/images",
-        masks_dir="data/SegmentationRoads/masks",
-        img_suffix=".jpg",
-        mask_suffix=".png",
-        transforms=transforms
-    )
+loader = DataLoader(dataset, batch_size=16, shuffle=True)
+
+backbone = {
+    "type":"unet_encoder",
+}
+
+decoder = {
+    "type":"unet_decoder",
+}
+
+head = {
+    "type":"segmentation_head",
+    "num_classes":1
+}
+model = SEGMENTATION_MODELS.build({
+    "type":"unet",
+    "backbone": backbone,
+    "decoder": decoder,
+    "head": head
+})
+
+criterion = LOSSES.build({
+    "type":"dice_bce_loss"
+})
+
+evaluators = [
+    {"type":"iou"},
+    {"type": "pixel_accuracy"},
+    {"type": "dice_score"}
+]
+
+optimizer = optim.Adam(
+    model.parameters(),
+    lr=1e-3
 )
-loader = DataLoader(dataset, batch_size=2, shuffle=True)
+
+trainer_cfg = TrainerConfig(
+    epochs=3,
+    device="cpu",
+    evaluators=evaluators
+)
 
 trainer = Trainer(
-    TrainerConfig(
-        epochs=3,
-        device="cpu",
-        evaluators=[
-            IoUConfig(),
-            PixelAccuracyConfig(),
-            DiceScoreConfig()
-        ]
-    )
+    trainer_cfg
 )
 
 trainer.fit(
     model=model,
     train_loader=loader,
-    optimizer=torch.optim.Adam(model.parameters(), lr=1e-3),
+    optimizer=optimizer,
     criterion=criterion
 )

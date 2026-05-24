@@ -5,7 +5,7 @@ from ..base import HeadBase
 from ..configs import SegmentationHeadConfig
 from ..registry import HEADS
 
-@HEADS.register("segmentation_head")
+@HEADS.register("segmentation_head", SegmentationHeadConfig)
 class SegmentationHead(HeadBase):
     def __init__(
             self,

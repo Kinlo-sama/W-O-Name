@@ -28,15 +28,5 @@ class BackboneBase(nn.Module, ABC):
     
     @property
     @abstractmethod
-    def out_channels(self) -> dict[str, int]:
-        pass
-
-    def init_weights(self):
-        """
-        Initialize model weights.
-        Override in subclasses if needed.
-        """
-        pass
-
-    def freeze_stage(self):
+    def out_channels(self) -> Dict[str, int]:
         pass

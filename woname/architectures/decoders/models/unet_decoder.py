@@ -7,12 +7,13 @@ from ..registry import DECODERS
 from ..configs import UNetDecoderConfig
 from ..base import DecoderBase
 
-@DECODERS.register("unet_decoder")
+@DECODERS.register("unet_decoder", UNetDecoderConfig)
 class UNetDecoder(DecoderBase):
     def __init__(self,
                  cfg: UNetDecoderConfig,
                  encoder_channels: dict[str, int]):
         super().__init__()
+        self.encoder_channels = encoder_channels
         channels = list(encoder_channels.values())[::-1]
         self._out_channels = channels[-1]
         self.blocks = nn.ModuleList()

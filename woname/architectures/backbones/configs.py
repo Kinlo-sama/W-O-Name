@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, RootModel
 from typing import Literal, Optional, Union, Annotated
 
 class BackboneConfigBase(BaseModel):

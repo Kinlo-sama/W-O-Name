@@ -5,7 +5,7 @@ from woname.losses.base import LossBase
 from woname.losses.registry import LOSSES
 from woname.losses.configs import DiceLossConfig
 
-@LOSSES.register("dice_loss")
+@LOSSES.register("dice_loss", DiceLossConfig)
 class DiceLoss(LossBase):
     def __init__(
             self,

@@ -4,7 +4,7 @@ from woname.losses.configs import BCELossConfig
 import torch.nn as nn
 import torch
 
-@LOSSES.register("bce_loss")
+@LOSSES.register("bce_loss", BCELossConfig)
 class BCELoss(LossBase):
     def __init__(
             self,

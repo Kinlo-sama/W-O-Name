@@ -2,16 +2,12 @@ import torch
 
 from woname.losses.base import LossBase
 from woname.losses.registry import LOSSES
-from woname.losses.configs import (
-    DiceBCELossConfig,
-    DiceLossConfig,
-    BCELossConfig
-)
+from woname.losses.configs import DiceBCELossConfig
 
 from .dice import DiceLoss
 from .bce import BCELoss
 
-@LOSSES.register("dice_bce_loss")
+@LOSSES.register("dice_bce_loss", DiceBCELossConfig)
 class DiceBCELoss(LossBase):
     def __init__(
             self, 
@@ -19,12 +15,8 @@ class DiceBCELoss(LossBase):
             ):
         super().__init__()
         
-        self.dice_loss = DiceLoss(
-            DiceLossConfig()
-        )
-        self.bce_loss = BCELoss(
-            BCELossConfig()
-        )
+        self.dice_loss = DiceLoss(cfg.dice_cfg)
+        self.bce_loss = BCELoss(cfg.bce_cfg)
 
         self.dice_weight = cfg.dice_weight
         self.bce_weight = cfg.bce_weight

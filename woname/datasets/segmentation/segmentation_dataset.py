@@ -6,7 +6,7 @@ from woname.datasets.base import DatasetBase
 from woname.datasets.registry import DATASETS
 from woname.datasets.configs import SegmentationDatasetConfig
 
-@DATASETS.register("segmentation_dataset")
+@DATASETS.register("segmentation_dataset", SegmentationDatasetConfig)
 class SegmentationClass(DatasetBase):
     def __init__(
             self,

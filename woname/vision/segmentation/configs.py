@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Optional, Any
 from pydantic import BaseModel
 
 from woname.architectures.backbones.configs import BackboneConfig
@@ -11,4 +11,5 @@ class UNetConfig(BaseModel):
 
     backbone: BackboneConfig
     decoder: UNetDecoderConfig
+    neck: Optional[Any] = None
     head: SegmentationHeadConfig

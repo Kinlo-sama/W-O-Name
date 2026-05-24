@@ -4,7 +4,7 @@ from woname.evaluators.base import MetricBase
 from woname.evaluators.registry import EVALUATORS
 from ..configs import DiceScoreConfig
 
-@EVALUATORS.register("dice_score")
+@EVALUATORS.register("dice_score", DiceScoreConfig)
 class DiceScore(MetricBase):
     def __init__(
             self,

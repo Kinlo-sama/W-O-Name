@@ -84,7 +84,7 @@ class Trainer:
                 for name in evaluators
             }
         
-        pbar = tqdm(loader, desc=f"{epoch + 1}/{self.cfg.epochs + 1}", leave=False)
+        pbar = tqdm(loader, desc=f"Epoch {epoch + 1}/{self.cfg.epochs}", leave=False)
         for batch in pbar:
 
             images = batch["image"].to(self.device)
@@ -129,11 +129,12 @@ class Trainer:
             model,
             loader,
             criterion,
+            epoch
     ):
         model.eval()
         running_loss = 0.0
         with torch.no_grad(): 
-            pbar = tqdm(loader, desc="Validation", leave=False)   
+            pbar = tqdm(loader, desc=f"Epoch {epoch + 1}/{self.cfg.epochs}", leave=False)   
             for batch in pbar:   
                 images = batch["image"].to(self.device)
                 targets = batch["target"].to(self.device)

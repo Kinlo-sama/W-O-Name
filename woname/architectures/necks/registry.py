@@ -1,3 +1,3 @@
 from woname.core.registry import Registry
 
-TRANSFORMS = Registry("transforms")
+NECKS = Registry("necks")

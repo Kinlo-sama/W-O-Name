@@ -1,14 +1,21 @@
 import cv2
-from woname.transforms.base import TransformBase
 import random
 
+from woname.transforms.base import TransformBase
+from woname.transforms.registry import TRANSFORMS
+from woname.transforms.configs import (
+    ResizeConfig,
+    RandomHorizontalFlipConfig
+)
+
+@TRANSFORMS.register("resize", ResizeConfig)
 class Resize(TransformBase):
     def __init__(
             self,
-            size
+            cfg: ResizeConfig
     ):
         super().__init__()
-        self.size = size
+        self.size = cfg.size
     
     def __call__(self, sample):
         sample = sample.copy()
@@ -26,13 +33,14 @@ class Resize(TransformBase):
         return sample
     
 
+@TRANSFORMS.register("randomhorizontalflip", RandomHorizontalFlipConfig)
 class RandomHorizontalFlip(TransformBase):
     def __init__(
             self,
-            p: float = 0.5
+            cfg: RandomHorizontalFlipConfig
     ):
         super().__init__()
-        self.p = p
+        self.p = cfg.p
 
     def __call__(
             self,

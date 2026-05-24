@@ -7,11 +7,10 @@ from ..base import BackboneBase
 from ..registry import BACKBONES
 from ..configs import UNetEncoderConfig
 
-@BACKBONES.register("unet_encoder")
+@BACKBONES.register("unet_encoder", UNetEncoderConfig)
 class UNetEncoder(BackboneBase):
     def __init__(self, cfg: UNetEncoderConfig):
         super().__init__()
-        self.cfg = cfg
 
         channels = [
             cfg.base_channels * (2 ** i)
