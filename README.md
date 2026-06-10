@@ -1,28 +1,37 @@
 # W-O-Name
-Repositorio para templates de tareas en vision por computadora 
 
-La versión de python a utilizar para cada una de las tareas es: 3.11  
-La estructura de las carpetas es la siguiente:
-- Core: Funciones principales como 
-    - Engine: Procesos de entrenamiento
-    - Graph: Representación de modelos
-    - Pluggins: Modulos externos y extras
-    - Registro de modelos 
-- Vision: Entran tareas por vision por computadora propuestas
--  Architectures: Backbone, Neck, Decoders, Heads
-- Losses: Funciones de perdida
-- Evaluators: Metricas de evaluación
-- Layers: Capas primitivas e.g: DobConv2D, ConvTrans, ConvDil, etc.
+Repository containing templates for computer vision tasks.
 
-Los formatos propuestos para las configuraciones de cada tarea son los siguientes:
-- YAML
-- TOML
-- JSON
-- Python
-- CLI
-- web UI
+The Python version to be used for all tasks is **3.11**.
 
+The folder structure is organized as follows:
 
-## **Metas**
+* **Core**: Main framework functionalities, including:
 
-- Implementación **lazy registration**
+  * **Engine**: Training and inference processes.
+  * **Graph**: Model representation and computational graphs.
+  * **Plugins**: External modules and additional utilities.
+  * **Registry**: Model registration and management.
+
+* **Vision**: Proposed computer vision tasks.
+
+* **Architectures**: Backbone, Neck, Decoders, and Heads.
+
+* **Losses**: Loss functions.
+
+* **Evaluators**: Evaluation metrics.
+
+* **Layers**: Primitive layers, e.g., `DoubleConv2D`, `ConvTranspose`, `DilatedConv`, etc.
+
+The supported configuration formats for each task are:
+
+* YAML
+* TOML
+* JSON
+* Python
+* CLI
+* Web UI
+
+## Goals
+
+* Implementation of **lazy registration**.
